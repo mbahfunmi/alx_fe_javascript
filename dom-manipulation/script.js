@@ -5,7 +5,7 @@ let quotes = [
   { text: "Simplicity is the ultimate sophistication.", category: "Wisdom" }
 ];
 
-// Function to show a random quote
+// ✅ Function to display a random quote
 function displayRandomQuote() {
   const quoteDisplay = document.getElementById("quoteDisplay");
   const randomIndex = Math.floor(Math.random() * quotes.length);
@@ -17,10 +17,15 @@ function displayRandomQuote() {
   `;
 }
 
-// ✅ Attach event to "Show New Quote" button
-document.getElementById("newQuote").addEventListener("click", displayRandomQuote);
+// ✅ Attach event listener to "Show New Quote" button
+document.addEventListener("DOMContentLoaded", () => {
+  const newQuoteButton = document.getElementById("newQuote");
+  if (newQuoteButton) {
+    newQuoteButton.addEventListener("click", displayRandomQuote);
+  }
+});
 
-// Function to add new quote
+// ✅ Function to add a new quote
 function addQuote() {
   const textInput = document.getElementById("newQuoteText");
   const categoryInput = document.getElementById("newQuoteCategory");
@@ -31,10 +36,12 @@ function addQuote() {
   };
 
   if (newQuote.text && newQuote.category) {
-    quotes.push(newQuote); // Add to array
+    quotes.push(newQuote);
     textInput.value = "";
     categoryInput.value = "";
-    alert("Quote added!");
+
+    // ✅ Optional: Show newly added quote immediately
+    displayRandomQuote();
   } else {
     alert("Please enter both quote and category.");
   }
