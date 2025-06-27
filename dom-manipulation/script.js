@@ -17,13 +17,8 @@ function displayRandomQuote() {
   `;
 }
 
-// ✅ Attach event listener to "Show New Quote" button
-document.addEventListener("DOMContentLoaded", () => {
-  const newQuoteButton = document.getElementById("newQuote");
-  if (newQuoteButton) {
-    newQuoteButton.addEventListener("click", displayRandomQuote);
-  }
-});
+// Attach event to "Show New Quote" button
+document.getElementById("newQuote").addEventListener("click", displayRandomQuote);
 
 // ✅ Function to add a new quote
 function addQuote() {
