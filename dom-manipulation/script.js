@@ -1,6 +1,6 @@
 // Initial list of quotes
 let quotes = [
-  {  text: "Learn something new every day.", category: "Education" },
+  { text: "Learn something new every day.", category: "Education" },
   { text: "Stay positive!", category: "Motivation" },
   { text: "Simplicity is the ultimate sophistication.", category: "Wisdom" }
 ];
@@ -17,8 +17,8 @@ function displayRandomQuote() {
   `;
 }
 
-// Attach event to "Show New Quote" button
-document.getElementById("newQuote").addEventListener("click", showRandomQuote);
+// ✅ Attach event to "Show New Quote" button
+document.getElementById("newQuote").addEventListener("click", displayRandomQuote);
 
 // Function to add new quote
 function addQuote() {
