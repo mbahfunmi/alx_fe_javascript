@@ -34,9 +34,7 @@ function addQuote() {
     quotes.push(newQuote);
     textInput.value = "";
     categoryInput.value = "";
-
-    // ✅ Optional: Show newly added quote immediately
-    displayRandomQuote();
+    alert("Quote added!");
   } else {
     alert("Please enter both quote and category.");
   }
