@@ -1,11 +1,11 @@
-// 1. Our quotes array
+// Quotes array
 let quotes = [
   { text: "The best way to get started is to quit talking and begin doing.", category: "Motivation" },
   { text: "Don't let yesterday take up too much of today.", category: "Inspiration" },
-  { text: "we do hard things.", category: "Alx" }
+  { text: "Whether you think you can or think you can’t, you’re right.", category: "Mindset" }
 ];
 
-// 2. Function to render any given quote object into the #quoteDisplay div
+// Display a quote in the DOM
 function renderQuote(quote) {
   const quoteDisplay = document.getElementById("quoteDisplay");
   quoteDisplay.innerHTML = `
@@ -14,39 +14,35 @@ function renderQuote(quote) {
   `;
 }
 
-// 3. Show a random quote
+// Show random quote
 function showRandomQuote() {
   const randomIndex = Math.floor(Math.random() * quotes.length);
   renderQuote(quotes[randomIndex]);
 }
 
-// 4. Add event listener on “Show New Quote”
-document
-  .getElementById("newQuote")
-  .addEventListener("click", showRandomQuote);
-
-// 5. Function to add a new quote AND immediately update the DOM
+// Add new quote
 function addQuote() {
-  const newTextEl = document.getElementById("newQuoteText");
-  const newCatEl = document.getElementById("newQuoteCategory");
-  const newText = newTextEl.value.trim();
-  const newCategory = newCatEl.value.trim();
+  const textInput = document.getElementById("newQuoteText");
+  const categoryInput = document.getElementById("newQuoteCategory");
+
+  const newText = textInput.value.trim();
+  const newCategory = categoryInput.value.trim();
 
   if (!newText || !newCategory) {
-    alert("Please fill in both fields.");
+    alert("Please enter both a quote and category.");
     return;
   }
 
-  // Push into our array
-  const newQuoteObj = { text: newText, category: newCategory };
-  quotes.push(newQuoteObj);
+  const newQuote = { text: newText, category: newCategory };
+  quotes.push(newQuote);         // Add to array
+  renderQuote(newQuote);         // Update DOM
 
-  // Immediately show it on the page
-  renderQuote(newQuoteObj);
+  textInput.value = "";
+  categoryInput.value = "";
 
-  // Clear inputs
-  newTextEl.value = "";
-  newCatEl.value = "";
-
-  alert("New quote added and displayed!");
+  alert("Quote added successfully!");
 }
+
+// ✅ Attach both event listeners using JavaScript
+document.getElementById("newQuote").addEventListener("click", showRandomQuote);
+document.getElementById("addQuote").addEventListener("click", addQuote);
