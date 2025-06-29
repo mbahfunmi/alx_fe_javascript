@@ -4,6 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Quote Generator</title>
+    <style>
+        /* Basic styling for the custom message box */
+        #messageBoxContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none; /* Hidden by default */
+        }
+        #messageBox {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            font-family: sans-serif;
+            color: #333;
+        }
+        #messageBox h4 {
+            margin-top: 0;
+            font-size: 1.5em;
+            color: #007bff;
+        }
+        #messageBox p {
+            margin-bottom: 20px;
+            font-size: 1em;
+            line-height: 1.5;
+        }
+        #messageBox button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        #messageBox button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <h1>Dynamic Quote Generator</h1>
@@ -45,6 +94,15 @@
         <button id="syncButton">Sync with Server</button>
     </div>
     <p id="syncStatus">Last sync: Never</p>
+
+    <!-- Custom Message Box UI -->
+    <div id="messageBoxContainer">
+        <div id="messageBox">
+            <h4 id="messageBoxTitle"></h4>
+            <p id="messageBoxContent"></p>
+            <button id="messageBoxClose">OK</button>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

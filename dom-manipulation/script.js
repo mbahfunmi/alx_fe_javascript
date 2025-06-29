@@ -4,6 +4,30 @@ let quotes = [];
 let selectedCategory = "all";
 
 /**
+ * Custom function to display messages on the UI, replacing native alert().
+ * @param {string} title - The title of the message box.
+ * @param {string} message - The content message to display.
+ */
+function showMessageBox(title, message) {
+    const messageBoxContainer = document.getElementById("messageBoxContainer");
+    const messageBoxTitle = document.getElementById("messageBoxTitle");
+    const messageBoxContent = document.getElementById("messageBoxContent");
+    const messageBoxCloseButton = document.getElementById("messageBoxClose");
+
+    messageBoxTitle.textContent = title;
+    messageBoxContent.textContent = message;
+    messageBoxContainer.style.display = "flex"; // Show the message box
+
+    // Set up event listener for the close button
+    // Using a new anonymous function each time is fine for this simple case.
+    // For more complex apps, consider removing and re-adding listeners to avoid duplicates.
+    messageBoxCloseButton.onclick = () => {
+        messageBoxContainer.style.display = "none"; // Hide the message box
+    };
+}
+
+
+/**
  * Loads quotes from local storage. If no quotes are found,
  * initializes with a default set of quotes.
  */
@@ -47,7 +71,6 @@ function initQuoteApp() {
     document.getElementById("syncButton").addEventListener("click", syncQuotes); // Call syncQuotes for manual sync
 
     // Task 3: Implement periodic data fetching (every 60 seconds)
-    // The checker expects this to be active.
     setInterval(syncQuotes, 60000); // 60000 ms = 1 minute
     console.log("Periodic sync enabled every 60 seconds.");
 }
@@ -123,7 +146,7 @@ function addQuote() {
     const category = categoryInput.value.trim();
 
     if (!text || !category) {
-        alert("Please enter both quote text and category.");
+        showMessageBox("Input Error", "Please enter both quote text and category.");
         return;
     }
 
@@ -136,7 +159,7 @@ function addQuote() {
     populateCategories();
     showRandomQuote();
     filterQuotes();
-    alert("Quote added successfully!");
+    showMessageBox("Success", "Quote added successfully!");
     console.log("Quote added:", { text, category });
 }
 
@@ -202,7 +225,7 @@ function exportToJsonFile() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    alert("Quotes exported successfully as quotes.json!");
+    showMessageBox("Export Complete", "Quotes exported successfully as quotes.json!");
     console.log("Quotes exported.");
 }
 
@@ -212,7 +235,7 @@ function exportToJsonFile() {
 function importFromJsonFile(event) {
     const file = event.target.files[0];
     if (!file) {
-        alert("Please select a JSON file to import.");
+        showMessageBox("Import Error", "Please select a JSON file to import.");
         return;
     }
 
@@ -237,22 +260,22 @@ function importFromJsonFile(event) {
                 populateCategories();
                 filterQuotes();
                 showRandomQuote();
-                alert(`Successfully imported ${newQuotesToAdd.length} new quotes!`);
+                showMessageBox("Import Success", `Successfully imported ${newQuotesToAdd.length} new quotes!`);
                 console.log(`Imported ${newQuotesToAdd.length} new quotes.`);
             } else {
-                alert("No new unique quotes found in the imported file.");
+                showMessageBox("Import Info", "No new unique quotes found in the imported file.");
                 console.log("No new unique quotes to import.");
             }
 
         } catch (err) {
-            alert("Failed to import quotes: " + err.message);
+            showMessageBox("Import Failed", "Failed to import quotes: " + err.message);
             console.error("Import error:", err);
         } finally {
             event.target.value = ''; // Clear file input
         }
     };
     fileReader.onerror = function(err) {
-        alert("Error reading file: " + err.message);
+        showMessageBox("File Read Error", "Error reading file: " + err.message);
         console.error("FileReader error:", err);
     };
 
@@ -305,10 +328,10 @@ async function postQuotesToServer() {
         }
         const result = await response.json();
         console.log("Local quotes posted to server (mock response):", result);
-        alert("Local quotes sent to server (simulated).");
+        // showMessageBox("Server Post", "Local quotes sent to server (simulated)."); // Optional: if you want a pop-up here too
     } catch (error) {
         console.error("Error posting quotes to server:", error);
-        alert("Failed to post local quotes to server (simulated).");
+        // showMessageBox("Server Post Failed", "Failed to post local quotes to server (simulated)."); // Optional
     }
 }
 
@@ -325,7 +348,6 @@ async function syncQuotes() {
 
     try {
         // Step 1: Simulate posting local changes to the server first (if applicable)
-        // This addresses "Check for posting data to the server using a mock API"
         await postQuotesToServer();
 
         // Step 2: Fetch the latest data from the server
@@ -344,8 +366,6 @@ async function syncQuotes() {
                 quotes.push(sQuote); // Add new quote from server
                 newQuotesAddedCount++;
             } else {
-                // If a quote exists locally, consider it a resolved conflict if it matched.
-                // For a simple checker, this is sufficient.
                 conflictsResolvedCount++;
             }
         });
@@ -357,13 +377,13 @@ async function syncQuotes() {
         showRandomQuote();
 
         // Step 5: Update UI with notifications
-        const message = `Sync complete! Added ${newQuotesAddedCount} new quotes from server. Resolved ${conflictsResolvedCount} potential conflicts.`;
-        alert(message); // UI element or notification
+        const message = `Added ${newQuotesAddedCount} new quotes from server. Resolved ${conflictsResolvedCount} potential conflicts.`;
+        showMessageBox("Sync Complete", message); // Use custom message box
         syncStatusElement.textContent = `Last sync: ${new Date().toLocaleTimeString()} (Added ${newQuotesAddedCount}, Resolved ${conflictsResolvedCount})`;
         console.log("Data sync successful:", message);
 
     } catch (error) {
-        alert("Error during data sync. Check console for details.");
+        showMessageBox("Sync Failed", "Error during data sync. Check console for details."); // Use custom message box
         syncStatusElement.textContent = `Last sync: ${new Date().toLocaleTimeString()} (Failed)`;
         console.error("Data sync failed:", error);
     }
