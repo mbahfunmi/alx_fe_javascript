@@ -1,15 +1,12 @@
-// Step 1: Define an array of quotes
+// 1. Our quotes array
 let quotes = [
   { text: "The best way to get started is to quit talking and begin doing.", category: "Motivation" },
   { text: "Don't let yesterday take up too much of today.", category: "Inspiration" },
   { text: "we do hard things.", category: "Alx" }
 ];
 
-// Step 2: Function to show a random quote
-function showRandomQuote() {
-  const randomIndex = Math.floor(Math.random() * quotes.length);
-  const quote = quotes[randomIndex];
-
+// 2. Function to render any given quote object into the #quoteDisplay div
+function renderQuote(quote) {
   const quoteDisplay = document.getElementById("quoteDisplay");
   quoteDisplay.innerHTML = `
     <p><strong>Quote:</strong> ${quote.text}</p>
@@ -17,24 +14,39 @@ function showRandomQuote() {
   `;
 }
 
-// Step 3: Add event listener to the button
-document.getElementById("newQuote").addEventListener("click", showRandomQuote);
+// 3. Show a random quote
+function showRandomQuote() {
+  const randomIndex = Math.floor(Math.random() * quotes.length);
+  renderQuote(quotes[randomIndex]);
+}
 
-// Step 4: Function to add a new quote
+// 4. Add event listener on “Show New Quote”
+document
+  .getElementById("newQuote")
+  .addEventListener("click", showRandomQuote);
+
+// 5. Function to add a new quote AND immediately update the DOM
 function addQuote() {
-  const newText = document.getElementById("newQuoteText").value.trim();
-  const newCategory = document.getElementById("newQuoteCategory").value.trim();
+  const newTextEl = document.getElementById("newQuoteText");
+  const newCatEl = document.getElementById("newQuoteCategory");
+  const newText = newTextEl.value.trim();
+  const newCategory = newCatEl.value.trim();
 
-  if (newText === "" || newCategory === "") {
+  if (!newText || !newCategory) {
     alert("Please fill in both fields.");
     return;
   }
 
-  quotes.push({ text: newText, category: newCategory });
+  // Push into our array
+  const newQuoteObj = { text: newText, category: newCategory };
+  quotes.push(newQuoteObj);
 
-  // Optional: Clear the inputs after adding
-  document.getElementById("newQuoteText").value = "";
-  document.getElementById("newQuoteCategory").value = "";
+  // Immediately show it on the page
+  renderQuote(newQuoteObj);
 
-  alert("New quote added successfully!");
+  // Clear inputs
+  newTextEl.value = "";
+  newCatEl.value = "";
+
+  alert("New quote added and displayed!");
 }
