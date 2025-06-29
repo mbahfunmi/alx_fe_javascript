@@ -4,28 +4,26 @@ let quotes = [];
 let selectedCategory = "all";
 
 /**
- * Custom function to display messages on the UI, replacing native alert().
- * @param {string} title - The title of the message box.
+ * Custom function to display toast-like notifications on the UI.
+ * This replaces native alert() and confirmation dialogs.
  * @param {string} message - The content message to display.
+ * @param {number} duration - How long the toast should be visible in milliseconds (default: 3000ms).
  */
-function showMessageBox(title, message) {
-    const messageBoxContainer = document.getElementById("messageBoxContainer");
-    const messageBoxTitle = document.getElementById("messageBoxTitle");
-    const messageBoxContent = document.getElementById("messageBoxContent");
-    const messageBoxCloseButton = document.getElementById("messageBoxClose");
+function showToastNotification(message, duration = 3000) {
+    const toastElement = document.getElementById("toastNotification");
+    if (!toastElement) {
+        console.error("Toast notification element not found!");
+        return;
+    }
 
-    messageBoxTitle.textContent = title;
-    messageBoxContent.textContent = message;
-    messageBoxContainer.style.display = "flex"; // Show the message box
+    toastElement.textContent = message;
+    toastElement.classList.add("show"); // Add 'show' class to make it visible
 
-    // Set up event listener for the close button
-    // Using a new anonymous function each time is fine for this simple case.
-    // For more complex apps, consider removing and re-adding listeners to avoid duplicates.
-    messageBoxCloseButton.onclick = () => {
-        messageBoxContainer.style.display = "none"; // Hide the message box
-    };
+    // Hide the toast after the specified duration
+    setTimeout(() => {
+        toastElement.classList.remove("show"); // Remove 'show' class to hide it
+    }, duration);
 }
-
 
 /**
  * Loads quotes from local storage. If no quotes are found,
@@ -146,7 +144,7 @@ function addQuote() {
     const category = categoryInput.value.trim();
 
     if (!text || !category) {
-        showMessageBox("Input Error", "Please enter both quote text and category.");
+        showToastNotification("Please enter both quote text and category.", 4000);
         return;
     }
 
@@ -159,7 +157,7 @@ function addQuote() {
     populateCategories();
     showRandomQuote();
     filterQuotes();
-    showMessageBox("Success", "Quote added successfully!");
+    showToastNotification("Quote added successfully!", 3000);
     console.log("Quote added:", { text, category });
 }
 
@@ -225,7 +223,7 @@ function exportToJsonFile() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    showMessageBox("Export Complete", "Quotes exported successfully as quotes.json!");
+    showToastNotification("Quotes exported successfully as quotes.json!", 3000);
     console.log("Quotes exported.");
 }
 
@@ -235,7 +233,7 @@ function exportToJsonFile() {
 function importFromJsonFile(event) {
     const file = event.target.files[0];
     if (!file) {
-        showMessageBox("Import Error", "Please select a JSON file to import.");
+        showToastNotification("Please select a JSON file to import.", 4000);
         return;
     }
 
@@ -260,22 +258,22 @@ function importFromJsonFile(event) {
                 populateCategories();
                 filterQuotes();
                 showRandomQuote();
-                showMessageBox("Import Success", `Successfully imported ${newQuotesToAdd.length} new quotes!`);
+                showToastNotification(`Successfully imported ${newQuotesToAdd.length} new quotes!`, 3000);
                 console.log(`Imported ${newQuotesToAdd.length} new quotes.`);
             } else {
-                showMessageBox("Import Info", "No new unique quotes found in the imported file.");
+                showToastNotification("No new unique quotes found in the imported file.", 3000);
                 console.log("No new unique quotes to import.");
             }
 
         } catch (err) {
-            showMessageBox("Import Failed", "Failed to import quotes: " + err.message);
+            showToastNotification("Failed to import quotes: " + err.message, 5000);
             console.error("Import error:", err);
         } finally {
             event.target.value = ''; // Clear file input
         }
     };
     fileReader.onerror = function(err) {
-        showMessageBox("File Read Error", "Error reading file: " + err.message);
+        showToastNotification("Error reading file: " + err.message, 5000);
         console.error("FileReader error:", err);
     };
 
@@ -328,10 +326,10 @@ async function postQuotesToServer() {
         }
         const result = await response.json();
         console.log("Local quotes posted to server (mock response):", result);
-        // showMessageBox("Server Post", "Local quotes sent to server (simulated)."); // Optional: if you want a pop-up here too
+        // showToastNotification("Local quotes sent to server (simulated).", 2000); // Optional: if you want a toast here too
     } catch (error) {
         console.error("Error posting quotes to server:", error);
-        // showMessageBox("Server Post Failed", "Failed to post local quotes to server (simulated)."); // Optional
+        // showToastNotification("Failed to post local quotes to server (simulated).", 3000); // Optional
     }
 }
 
@@ -378,12 +376,12 @@ async function syncQuotes() {
 
         // Step 5: Update UI with notifications
         const message = `Added ${newQuotesAddedCount} new quotes from server. Resolved ${conflictsResolvedCount} potential conflicts.`;
-        showMessageBox("Sync Complete", message); // Use custom message box
+        showToastNotification(`Sync Complete! ${message}`, 5000); // Use custom toast notification
         syncStatusElement.textContent = `Last sync: ${new Date().toLocaleTimeString()} (Added ${newQuotesAddedCount}, Resolved ${conflictsResolvedCount})`;
         console.log("Data sync successful:", message);
 
     } catch (error) {
-        showMessageBox("Sync Failed", "Error during data sync. Check console for details."); // Use custom message box
+        showToastNotification("Error during data sync. Check console for details.", 5000); // Use custom toast notification
         syncStatusElement.textContent = `Last sync: ${new Date().toLocaleTimeString()} (Failed)`;
         console.error("Data sync failed:", error);
     }

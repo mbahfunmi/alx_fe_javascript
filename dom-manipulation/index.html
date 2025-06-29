@@ -4,105 +4,266 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Quote Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Basic styling for the custom message box */
-        #messageBoxContainer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            display: none; /* Hidden by default */
-        }
-        #messageBox {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            font-family: sans-serif;
+        /* General Body Styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light gray background */
             color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center content horizontally */
+            gap: 25px; /* Space between main sections */
+            min-height: 100vh; /* Ensure body takes full viewport height */
+            box-sizing: border-box; /* Include padding in element's total width and height */
         }
-        #messageBox h4 {
-            margin-top: 0;
-            font-size: 1.5em;
-            color: #007bff;
+
+        h1, h3 {
+            color: #2c3e50; /* Darker blue-gray for headings */
+            text-align: center;
+            margin-bottom: 15px;
         }
-        #messageBox p {
-            margin-bottom: 20px;
+
+        /* Main App Container */
+        #app-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px; /* Rounded corners for the main container */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            width: 100%;
+            max-width: 800px; /* Max width for larger screens */
+            display: flex;
+            flex-direction: column;
+            gap: 30px; /* Space between sections inside the container */
+        }
+
+        /* Section Containers */
+        .section-container {
+            border: 1px solid #e0e7ed; /* Light border */
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fdfefe; /* Slightly off-white background for sections */
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Space between elements within a section */
+        }
+
+        /* Specific styles for Quote Display */
+        #quoteDisplay {
+            min-height: 80px; /* Minimum height for the quote display */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 1.5em; /* Larger font size */
+            font-style: italic;
+            color: #007bff; /* Bright blue for the quote text */
+            background-color: #e6f2ff; /* Very light blue background */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05); /* Inner shadow */
+        }
+
+        /* Form Elements: Inputs, Selects, Buttons */
+        button, select, input[type="text"], input[type="file"] {
+            padding: 10px 15px;
+            border-radius: 8px; /* Rounded corners for all form elements */
+            border: 1px solid #ced4da; /* Light gray border */
             font-size: 1em;
-            line-height: 1.5;
+            transition: all 0.2s ease-in-out; /* Smooth transitions for hover/focus */
+            box-sizing: border-box; /* Ensure padding doesn't increase element size */
         }
-        #messageBox button {
-            background-color: #007bff;
+
+        button {
+            background-color: #007bff; /* Primary blue for buttons */
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
             cursor: pointer;
-            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2); /* Soft shadow for buttons */
+            font-weight: 600;
         }
-        #messageBox button:hover {
-            background-color: #0056b3;
+
+        button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            transform: translateY(-1px); /* Slight lift effect */
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3); /* Enhanced shadow on hover */
+        }
+
+        /* Specific button colors for sync */
+        #syncButton {
+            background-color: #28a745; /* Green for sync button */
+            box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+        }
+
+        #syncButton:hover {
+            background-color: #218838; /* Darker green on hover */
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+        }
+
+        input[type="text"], select {
+            width: 100%; /* Full width for inputs and selects */
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: #007bff; /* Blue border on focus */
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Light blue glow on focus */
+            outline: none; /* Remove default outline */
+        }
+
+        input[type="file"] {
+            border: 1px solid #ced4da; /* Consistent border for file input */
+            background-color: #f8f9fa; /* Light background */
+        }
+
+        /* Flexbox for arranging elements in rows */
+        .flex-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            align-items: center; /* Align items vertically in the middle */
+        }
+
+        .flex-row > label {
+            flex-shrink: 0; /* Prevent label from shrinking */
+        }
+
+        .flex-row > select, .flex-row > input[type="text"] {
+            flex-grow: 1; /* Inputs/selects can grow to fill space */
+            min-width: 150px; /* Minimum width before wrapping */
+        }
+
+        /* Filtered Quotes List */
+        #filteredQuotesList {
+            list-style: none; /* Remove default list bullets */
+            padding: 0;
+            margin-top: 10px;
+            border-top: 1px solid #eee; /* Separator line */
+            padding-top: 10px;
+        }
+
+        #filteredQuotesList li {
+            background-color: #f8f9fa; /* Light background for list items */
+            border: 1px solid #e9ecef; /* Light border */
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            font-size: 0.95em;
+            word-wrap: break-word; /* Ensure long text wraps */
+        }
+
+        /* Custom Toast Notification UI */
+        #toastNotification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333; /* Dark background */
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9em;
+            z-index: 1000;
+            opacity: 0; /* Hidden by default */
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Shadow for pop-up effect */
+            text-align: center;
+            min-width: 250px;
+            max-width: 90%; /* Max width for responsiveness */
+        }
+
+        #toastNotification.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            #app-container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            h3 {
+                font-size: 1.5em;
+            }
+            #quoteDisplay {
+                font-size: 1.2em;
+            }
+            .flex-row {
+                flex-direction: column; /* Stack elements vertically on small screens */
+                align-items: stretch; /* Stretch items to full width */
+            }
+            .flex-row > button, .flex-row > select, .flex-row > input[type="text"], .flex-row > input[type="file"] {
+                width: 100%; /* Full width for buttons and inputs */
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Dynamic Quote Generator</h1>
+    <div id="app-container">
+        <h1>Dynamic Quote Generator</h1>
 
-    <div>
-        <label for="categorySelect">Show random quote from category:</label>
-        <select id="categorySelect"></select>
-        <button id="newQuote">Show New Quote</button>
-    </div>
+        <div class="section-container">
+            <h3>Random Quote Display</h3>
+            <div class="flex-row">
+                <label for="categorySelect">Show random quote from category:</label>
+                <select id="categorySelect"></select>
+                <button id="newQuote">Show New Quote</button>
+            </div>
+            <div id="quoteDisplay">
+                <!-- Random quote will be displayed here -->
+            </div>
+        </div>
 
-    <div id="quoteDisplay">
-        <!-- Random quote will be displayed here -->
-    </div>
+        <div class="section-container">
+            <h3>Add New Quote:</h3>
+            <div id="addQuoteForm" class="flex-row">
+                <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
+                <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
+                <button id="addQuoteBtn">Add Quote</button>
+            </div>
+        </div>
 
-    <h3>Add New Quote:</h3>
-    <div id="addQuoteForm">
-        <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
-        <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-        <button id="addQuoteBtn">Add Quote</button>
-    </div>
+        <div class="section-container">
+            <h3>Filter Quotes by Category:</h3>
+            <div class="flex-row">
+                <label for="categoryFilter">Select Category:</label>
+                <select id="categoryFilter"></select>
+            </div>
+            <ul id="filteredQuotesList">
+                <!-- Filtered quotes will be displayed here -->
+            </ul>
+        </div>
 
-    <h3>Filter Quotes by Category:</h3>
-    <div>
-        <label for="categoryFilter">Select Category:</label>
-        <select id="categoryFilter"></select>
-    </div>
-    <ul id="filteredQuotesList">
-        <!-- Filtered quotes will be displayed here -->
-    </ul>
+        <div class="section-container">
+            <h3>Import / Export Quotes</h3>
+            <div class="flex-row">
+                <input type="file" id="importFile" accept=".json" />
+                <button id="exportButton">Export Quotes</button>
+            </div>
+        </div>
 
-    <h3>Import / Export Quotes</h3>
-    <div>
-        <input type="file" id="importFile" accept=".json" />
-        <button id="exportButton">Export Quotes</button>
-    </div>
-
-    <h3>Server Sync (Simulated)</h3>
-    <div>
-        <button id="syncButton">Sync with Server</button>
-    </div>
-    <p id="syncStatus">Last sync: Never</p>
-
-    <!-- Custom Message Box UI -->
-    <div id="messageBoxContainer">
-        <div id="messageBox">
-            <h4 id="messageBoxTitle"></h4>
-            <p id="messageBoxContent"></p>
-            <button id="messageBoxClose">OK</button>
+        <div class="section-container">
+            <h3>Server Sync (Simulated)</h3>
+            <div class="flex-row">
+                <button id="syncButton">Sync with Server</button>
+            </div>
+            <p id="syncStatus">Last sync: Never</p>
         </div>
     </div>
+
+    <!-- Custom Toast Notification UI -->
+    <div id="toastNotification"></div>
 
     <script src="script.js"></script>
 </body>
